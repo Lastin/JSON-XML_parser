@@ -30,7 +30,7 @@
 			<type>object</type>
 			<properties>				
 				<length>					
-					<type>number</type>
+					<type>&ampnumber</type>
 				</length>
 				<width>					
 					<type>number</type>
