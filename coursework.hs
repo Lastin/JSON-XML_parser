@@ -33,17 +33,19 @@ fromJSON (x:xs) | not (null xs) && isSpace (last xs) = fromJSON $ init (x:xs)
                 | otherwise                          = JNull
                 where isSpace = (`elem` " \t\n\r\f\v")
 
-posForChar :: Integral a => Char -> String -> a -> a -> a
-posForChar _ []        _ _ = 0
-posForChar c ('\\':ss) q e = 1 + (posForChar c ss q (e + 1))
-posForChar c (s:ss)    q e | even e && s == '"' = 1 + (posForChar c ss (q + 1) 0)
-                           | even q && s == c   = 0
-                           | otherwise          = 1 + (posForChar c ss q 0)
+posForChar :: Integral a => Char -> String -> a -> a -> a -> a
+posForChar _ [] _ _ _ = 0
+posForChar c ('\\':ss) q e l = 1 + (posForChar c ss q (e + 1) l)
+posForChar c (s:ss) q e l | even e && l == 0 && s == '"' = 1 + (posForChar c ss (q + 1) 0 l)
+ | even q && l == 0 && s == c = 0
+ | even q && s `elem` "{[" = 1 + (posForChar c ss q 0 (l + 1))
+ | even q && s `elem` "]}" = 1 + (posForChar c ss q 0 (l - 1))
+ | otherwise = 1 + (posForChar c ss q 0 l)
 
 splitList :: Char -> String -> [String]
 splitList c "" = []
 splitList c s  = (take pos s:splitList c (drop (pos + 1) s))
-               where pos = posForChar c s 0 0
+               where pos = posForChar c s 0 0 0
 
 -- TODO
 indent l = replicate l '\t'
@@ -54,19 +56,21 @@ toXML' (JBool b) l
 	| b = "true"
 	| otherwise = "false"
 toXML' (JNull) l = "<null/>"
-toXML' (JObject obj) l = indent l ++ foldl (++) "" ["<" ++ key ++ ">" ++ toXML' value (l+1) ++ "</" ++ key ++ ">" |  (JString key, value) <- obj]
-toXML' (JArray a) l = indent l ++ foldl (++) "<array>" ["<item>" ++ toXML' i (l+1) ++ "</item>" | i <- a] ++ "</array>"
+toXML' (JObject obj) l = indent l ++ foldl (++) "" ["\n" ++ indent l ++ "<" ++ key ++ ">" ++ toXML' value (l+1) ++ "</" ++ key ++ ">" |  (JString key, value) <- obj] ++ "\n" ++ indent (l-1)
+toXML' (JArray a) l = "\n" ++ indent l ++ foldl (++) "<array>" ["\n" ++ indent l ++ "<item>" ++ toXML' i (l+1) ++ "</item>" | i <- a] ++ "\n" ++ indent l ++ "</array>\n" ++ indent (l-1)
 toXML :: JValue -> String
-toXML x = "<?xml version=\"1.0\" encoding=\"utf-8\">\n" ++ toXML' x 0
+toXML x = "<?xml version=\"1.0\" encoding=\"utf-8\">" ++ toXML' x 0
 
 
 translate :: String -> String
 translate j = toXML $ fromJSON j
 
 main = do
-	[f, g] <- getArgs
+	[f, o, x] <- getArgs
 	contents <- readFile f
-	writeFile g $ show $ fromJSON contents
+	let objs = fromJSON contents
+	writeFile o $ show objs
+	writeFile x $ translate contents
 
 {-
 main = do
