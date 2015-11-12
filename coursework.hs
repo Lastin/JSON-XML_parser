@@ -57,7 +57,7 @@ toXML' (JBool b) l
 	| otherwise = "false"
 toXML' (JNull) l = "<null/>"
 toXML' (JObject obj) l = indent l ++ foldl (++) "" ["\n" ++ indent l ++ "<" ++ key ++ ">" ++ toXML' value (l+1) ++ "</" ++ key ++ ">" |  (JString key, value) <- obj] ++ "\n" ++ indent (l-1)
-toXML' (JArray a) l = "\n" ++ indent l ++ foldl (++) "<array>" ["\n" ++ indent l ++ "<item>" ++ toXML' i (l+1) ++ "</item>" | i <- a] ++ "\n" ++ indent l ++ "</array>\n" ++ indent (l-1)
+toXML' (JArray a) l = "\n" ++ indent l ++ foldl (++) "<array>" ["\n" ++ indent (l+1) ++ "<item>" ++ toXML' i (l+1) ++ "</item>" | i <- a] ++ "\n" ++ indent l ++ "</array>\n" ++ indent (l-1)
 toXML :: JValue -> String
 toXML x = "<?xml version=\"1.0\" encoding=\"utf-8\">" ++ toXML' x 0
 

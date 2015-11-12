@@ -41,9 +41,9 @@
 			</properties>
 			<required>
 				<array>
-				<item>length</item>
-				<item>width</item>
-				<item>height</item>
+					<item>length</item>
+					<item>width</item>
+					<item>height</item>
 				</array>
 			</required>
 		</dimensions>
@@ -54,9 +54,9 @@
 	</properties>
 	<required>
 		<array>
-		<item>id</item>
-		<item>name</item>
-		<item>price</item>
+			<item>id</item>
+			<item>name</item>
+			<item>price</item>
 		</array>
 	</required>
 </items>
