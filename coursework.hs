@@ -36,7 +36,9 @@ JArray stores the result of mapping every element returned from splitList with f
 splitList splits the string at commas and returns it as array of strings
 fromJSON is then called recursively
 
-JObject 
+JObject stores a list of key-value pairs, which is created by splitting the input the same way as a list to obtain the pairs.
+Then it is split again, but this time at the colon, to have the key and value separetely.
+Those are then again parsed by calling fromJSON recursively.
 -}
 fromJSON :: String -> JValue
 fromJSON (x:xs) | not (null xs) && isSpace (last xs) = fromJSON $ init (x:xs)
