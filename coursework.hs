@@ -5,7 +5,7 @@ module Coursework
         toXML,
         translate,
         mostCommonBand,
-        leastFinedBand,
+        leastFinedPost,
         finesPerType
     ) where
 
