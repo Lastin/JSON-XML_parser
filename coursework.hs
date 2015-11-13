@@ -1,12 +1,12 @@
--- TODO: separate JSON documentation (see coursework description)
--- TODO: do part 3
-
 module Coursework
     (
         JValue(..),
         fromJSON,
         toXML,
-        translate
+        translate,
+        mostCommonBand,
+        leastFinedBand,
+        finesPerType
     ) where
 
 import System.Environment
@@ -45,7 +45,7 @@ fromJSON :: String -> JValue
 fromJSON (x:xs) | not (null xs) && isSpace (last xs) = fromJSON $ init (x:xs)
                 | isSpace x                          = fromJSON xs
                 | x == '"'                           = JString $ init xs
-                | x `elem` ['0'..'9'] || x == '-' 	  = JNumber (read (x:xs) :: Double)
+                | x `elem` ['0'..'9'] || x == '-'    = JNumber (read (x:xs) :: Double)
                 | x == 't'                           = JBool True
                 | x == 'f'                           = JBool False
                 | x == '['                           = JArray $ map fromJSON (splitList ',' (init xs))
@@ -64,11 +64,11 @@ posForChar :: Integral a => Char -> String -> a -> a -> a -> a
 posForChar _ [] _ _ _ = 0
 posForChar c ('\\':ss) q e l = 1 + (posForChar c ss q (e + 1) l)
 posForChar c (s:ss) q e l
-	| even e && l == 0 && s == '"' = 1 + (posForChar c ss (q + 1) 0 l)
-	| even q && l == 0 && s == c = 0
-	| even q && s `elem` "{[" = 1 + (posForChar c ss q 0 (l + 1))
-	| even q && s `elem` "]}" = 1 + (posForChar c ss q 0 (l - 1))
-	| otherwise = 1 + (posForChar c ss q 0 l)
+    | even e && l == 0 && s == '"' = 1 + (posForChar c ss (q + 1) 0 l)
+    | even q && l == 0 && s == c = 0
+    | even q && s `elem` "{[" = 1 + (posForChar c ss q 0 (l + 1))
+    | even q && s `elem` "]}" = 1 + (posForChar c ss q 0 (l - 1))
+    | otherwise = 1 + (posForChar c ss q 0 l)
 
 {-
 splitList splits a string with a character into array of strings
@@ -77,7 +77,7 @@ splitList :: Char -> String -> [String]
 splitList c "" = []
 splitList c (' ':xs) = splitList c xs
 splitList c s = (take pos s:splitList c (drop (pos + 1) s))
- 						where pos = posForChar c s 0 0 0
+                         where pos = posForChar c s 0 0 0
 
 {-
 escapeChars function returns the escapes for most common special characters in the XML
@@ -85,12 +85,12 @@ If a character is not escaped, it is returned as a string
 -}
 escapeChars :: Char -> String
 escapeChars c 
-	| c == '\"' = "&quot"
-	| c == '&' = "&amp"
-	| c == '\'' = "&apos"
-	| c == '<' = "&lt"
-	| c == '>' = "&gt"
-	| otherwise = [c]
+    | c == '\"' = "&quot"
+    | c == '&' = "&amp"
+    | c == '\'' = "&apos"
+    | c == '<' = "&lt"
+    | c == '>' = "&gt"
+    | otherwise = [c]
 
 {-
 prStr is a helper function for printing strings. It iterates through every character
@@ -111,12 +111,12 @@ indent' l = "\n" ++ replicate l '\t'
 toXML' prints JValue as a formated XML string
 JObject is formated as <key>value<key> | (key, value) <- JObject
 JArray is formated as 
-	<array>
-		<item>JValue</item>
-		<item>JValue</item>
-		...
-		<item>JValue</item>
-	</array>
+    <array>
+        <item>JValue</item>
+        <item>JValue</item>
+        ...
+        <item>JValue</item>
+    </array>
 
 toXML returs XML declaration followed by the result of toXML'
 -}
@@ -124,8 +124,8 @@ toXML' :: JValue -> Int -> String
 toXML' (JString s) l = prStr s
 toXML' (JNumber n) l = show n
 toXML' (JBool b) l 
-	| b = "true"
-	| otherwise = "false"
+    | b = "true"
+    | otherwise = "false"
 toXML' (JNull) l = "<null/>"
 toXML' (JObject obj) l = indent l ++ foldl (++) "" [indent' l ++ "<" ++ (prStr key) ++ ">" ++ toXML' value (l+1) ++ "</" ++ (prStr key) ++ ">" |  (JString key, value) <- obj] ++ indent' (l-1)
 toXML' (JArray a) l = indent' l ++ foldl (++) "<array>" [indent' (l+1) ++ "<item>" ++ toXML' i (l+2) ++ "</item>" | i <- a] ++ indent' l ++ "</array>" ++ indent' (l)
@@ -141,17 +141,17 @@ translate j = toXML $ fromJSON j
 
 
 {-main = do
-	[f, x] <- getArgs
-	contents <- readFile f
-	let objs = fromJSON contents
-	--writeFile o $ show objs
-	writeFile x $ translate contents-}
+    [f, x] <- getArgs
+    contents <- readFile f
+    let objs = fromJSON contents
+    --writeFile o $ show objs
+    writeFile x $ translate contents-}
 
 
 {-Part 3-}
 getData :: JValue -> JValue
 getData (JObject x) = snd . head $ x
---mostCommonBand function returns most common penelaty band
+--mostCommonBand function returns most common penalty band
 mostCommonBand :: JValue -> String
 mostCommonBand (JObject x) = mostCommonBand $ snd $ x!!0
 mostCommonBand (JArray xs) = head . maximumBy (comparing length) . group . sort $ [s | JString s <- [x !! 21 | JArray x <- xs]]
@@ -165,7 +165,4 @@ leastFinedPost (JArray xs) = head . minimumBy (comparing length) . group . sort 
 finesPerType :: JValue -> [(String, Int)]
 finesPerType (JObject x) = finesPerType $ snd . head $ x
 finesPerType (JArray xs) = (map getCounts) . group . sort $ [s | JString s <- [x !! 18 | JArray x <- xs]]
-						where getCounts x = (head x, length x)
-
-
-
+                         where getCounts x = (head x, length x)
