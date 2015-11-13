@@ -1,15 +1,17 @@
 -- TODO: separate JSON documentation (see coursework description)
 -- TODO: do part 3
 
-{-module Coursework
+module Coursework
     (
         JValue(..),
         fromJSON,
         toXML,
         translate
-    ) where-}
+    ) where
 
 import System.Environment
+import Data.List
+import Data.Ord
 
 data JValue = JString String
             | JNumber Double
@@ -138,12 +140,32 @@ translate :: String -> String
 translate j = toXML $ fromJSON j
 
 
-main = do
+{-main = do
 	[f, x] <- getArgs
 	contents <- readFile f
 	let objs = fromJSON contents
 	--writeFile o $ show objs
-	writeFile x $ translate contents
+	writeFile x $ translate contents-}
+
 
 {-Part 3-}
+getData :: JValue -> JValue
+getData (JObject x) = snd . head $ x
+--mostCommonBand function returns most common penelaty band
+mostCommonBand :: JValue -> String
+mostCommonBand (JObject x) = mostCommonBand $ snd $ x!!0
+mostCommonBand (JArray xs) = head . maximumBy (comparing length) . group . sort $ [s | JString s <- [x !! 21 | JArray x <- xs]]
+
+--leastFinedPost returns a postcode with lowest amount of fines
+leastFinedPost :: JValue -> String
+leastFinedPost (JObject x) = leastFinedPost $ snd $ x!!0
+leastFinedPost (JArray xs) = head . minimumBy (comparing length) . group . sort $ map (last . words) [s | JString s <- [x !! 17 | JArray x <- xs]]
+
+--finesPerType returns the number of fines per vehicle type
+finesPerType :: JValue -> [(String, Int)]
+finesPerType (JObject x) = finesPerType $ snd . head $ x
+finesPerType (JArray xs) = (map getCounts) . group . sort $ [s | JString s <- [x !! 18 | JArray x <- xs]]
+						where getCounts x = (head x, length x)
+
+
 
