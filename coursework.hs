@@ -135,10 +135,10 @@ translate j = toXML $ fromJSON j
 
 
 main = do
-	[f, o, x] <- getArgs
+	[f, x] <- getArgs
 	contents <- readFile f
 	let objs = fromJSON contents
-	writeFile o $ show objs
+	--writeFile o $ show objs
 	writeFile x $ translate contents
 
 {-Part 3-}

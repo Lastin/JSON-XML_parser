@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8">
+<meta>	
+	<view>		
+		<id>3gtt-cf68</id>
+		<name>Air Quality Monitoring Outside 5 St Pancras Square</name>
+		<attribution>London Borough of Camden</attribution>
+		<attributionLink>http://www.camden.gov.uk</attributionLink>
+		<averageRating>0.0</averageRating>
+		<category>Environment</category>
+		<createdAt>1.43894217e9</createdAt>
+		<description>In August 2015 an air quality monitor was installed outside the London Borough of Camden&aposs main offices at 5 St Pancras Square, N1C 4AG to monitor the levels of NO2 (Nitrogen Dioxide) outside of the building. Attribution includes a time stamp of when the measurement was taken, NO2 readings in PPB (Parts Per Billion) and Micrograms Per Cubic Metre. The latter is the unit of measurement used by the European Commission and converted from PPB using this method: http://uk-air.defra.gov.uk/assets/documents/reports/cat06/0502160851_Conversion_Factors_Between_ppb_and.pdf. The location of the monitor is also included.</description>
+		<displayType>table</displayType>
+		<downloadCount>72.0</downloadCount>
+		<indexUpdatedAt>1.446460542e9</indexUpdatedAt>
+		<licenseId>UK_OGLV3.0</licenseId>
+		<newBackend>false</newBackend>
+		<numberOfComments>0.0</numberOfComments>
+		<oid>45657.0</oid>
+		<publicationAppendEnabled>true</publicationAppendEnabled>
+		<publicationDate>1.440682044e9</publicationDate>
+		<publicationGroup>23239.0</publicationGroup>
+		<publicationStage>published</publicationStage>
+		<rowClass></rowClass>
+		<rowsUpdatedAt>1.446460533e9</rowsUpdatedAt>
+		<rowsUpdatedBy>it3r-jdrj</rowsUpdatedBy>
+		<state>normal</state>
+		<tableId>24507.0</tableId>
+		<totalTimesRated>0.0</totalTimesRated>
+		<viewCount>40.0</viewCount>
+		<viewLastModified>1.446460515e9</viewLastModified>
+		<viewType>tabular</viewType>
+		<columns>
+			<array>
+				<item>					
+					<id><null/></id>
+					<name>sid</name>
+					<dataTypeName>meta_data</dataTypeName>
+					<fieldName>:sid</fieldName>
+					<position>0.0</position>
+					<renderTypeName>meta_data</renderTypeName>
+					<
