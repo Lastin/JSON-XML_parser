@@ -1,6 +1,5 @@
 -- TODO: separate JSON documentation (see coursework description)
 -- TODO: do part 3
--- TODO: comments
 
 {-module Coursework
     (
@@ -33,7 +32,7 @@ and { is objects
 If neither of the guards matches, then JNull is returned
 
 JArray stores the result of mapping every element returned from splitList with fromJSON
-splitList splits the string at commas and returns it as array of strings
+splitList splits the string at commas and returns it as an array of strings
 fromJSON is then called recursively
 
 JObject stores a list of key-value pairs, which is created by splitting the input the same way as a list to obtain the pairs.
@@ -98,6 +97,7 @@ prStr s = foldl (++) "" [ escapeChars char | char <- s]
 indent is a helper function which returns number of tabs
 indent' returns same string as indent, but with new line character appended on head
 -}
+indent :: Int -> String
 indent l = replicate l '\t'
 indent' l = "\n" ++ replicate l '\t'
 
@@ -122,7 +122,7 @@ toXML' (JBool b) l
 	| otherwise = "false"
 toXML' (JNull) l = "<null/>"
 toXML' (JObject obj) l = indent l ++ foldl (++) "" [indent' l ++ "<" ++ (prStr key) ++ ">" ++ toXML' value (l+1) ++ "</" ++ (prStr key) ++ ">" |  (JString key, value) <- obj] ++ indent' (l-1)
-toXML' (JArray a) l = indent' l ++ foldl (++) "<array>" [indent' (l+1) ++ "<item>" ++ toXML' i (l+1) ++ "</item>" | i <- a] ++ indent' l ++ "</array>" ++ indent' (l-1)
+toXML' (JArray a) l = indent' l ++ foldl (++) "<array>" [indent' (l+1) ++ "<item>" ++ toXML' i (l+2) ++ "</item>" | i <- a] ++ indent' l ++ "</array>" ++ indent' (l)
 toXML :: JValue -> String
 toXML x = "<?xml version=\"1.0\" encoding=\"utf-8\">" ++ toXML' x 0
 
@@ -140,4 +140,6 @@ main = do
 	let objs = fromJSON contents
 	writeFile o $ show objs
 	writeFile x $ translate contents
+
+{-Part 3-}
 
