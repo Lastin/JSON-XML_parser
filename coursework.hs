@@ -43,7 +43,7 @@ fromJSON :: String -> JValue
 fromJSON (x:xs) | not (null xs) && isSpace (last xs) = fromJSON $ init (x:xs)
                 | isSpace x                          = fromJSON xs
                 | x == '"'                           = JString $ init xs
-                | x `elem` ['0'..'9']                = JNumber (read (x:xs) :: Double)
+                | x `elem` ['0'..'9'] || x == '-' 	  = JNumber (read (x:xs) :: Double)
                 | x == 't'                           = JBool True
                 | x == 'f'                           = JBool False
                 | x == '['                           = JArray $ map fromJSON (splitList ',' (init xs))
@@ -68,10 +68,14 @@ posForChar c (s:ss) q e l
 	| even q && s `elem` "]}" = 1 + (posForChar c ss q 0 (l - 1))
 	| otherwise = 1 + (posForChar c ss q 0 l)
 
+{-
+splitList splits a string with a character into array of strings
+-}
 splitList :: Char -> String -> [String]
 splitList c "" = []
-splitList c s  = (take pos s:splitList c (drop (pos + 1) s))
-               where pos = posForChar c s 0 0 0
+splitList c (' ':xs) = splitList c xs
+splitList c s = (take pos s:splitList c (drop (pos + 1) s))
+ 						where pos = posForChar c s 0 0 0
 
 {-
 escapeChars function returns the escapes for most common special characters in the XML
